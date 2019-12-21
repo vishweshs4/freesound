@@ -16,13 +16,12 @@ def name(n=10, print_it=True):
     if print_it: print(name)
     return name
 
+splits = pd.read_pickle('data/splits.pkl')
 def get_datasource(dir_name='22k_2sec_better_centered_mel_db', split_idx=0):
     trn_df = pd.read_csv('data/train.csv')
 
     trn_paths = list(Path(f'data/img_train_{dir_name}/').iterdir())
     tst_paths = list(Path(f'data/img_test_{dir_name}/').iterdir())
-
-    splits = pd.read_pickle('data/splits.pkl')
 
     trn_df.fname = trn_df.fname.apply(lambda x: x.split('.')[0] + '.png')
     trn_df.set_index('fname', inplace=True)
@@ -63,3 +62,5 @@ def create_submission_and_submit(learner, dbch, sub_name, dir_name, preds=None):
     sub.to_csv(f'data/submissions/{sub_name}.csv.zip', compression='zip', index=False)
 
     os.system(f'kaggle competitions submit -c freesound-audio-tagging -f data/submissions/{sub_name}.csv.zip -m {sub_name}')
+
+val_targs = torch.cat([torch.load(f'data/targs/split_{split_idx}') for split_idx in range(5)])

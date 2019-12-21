@@ -139,27 +139,27 @@ def create_reassigned_representation(x, q, tdeci, over, noct, minf, maxf):
 
     return histo
 
-def plot_spectogram(spectogram, sr, minf, maxf, tdeci):
-    '''Plots the spectogram as returned by linear_reassignment.
+def plot_spectrograms(spectrograms, sr, minf, maxf, tdeci):
+    '''Plots the spectrograms as returned by linear_reassignment.
 
     sr, minf, maxf, tdeci should have same value as passed to linear_reassignment
     '''
-    spectogram_dense = spectogram.todense().T
+    spectrograms_dense = spectrograms.todense().T
     minfreq = minf*sr
     maxfreq = maxf*sr
 
     f = figure(figsize=(6.2,5.6))
     ax = f.add_axes([0.07, 0.02, 0.79, 0.89])
     axcolor = f.add_axes([0.90, 0.02, 0.03, 0.79])
-    im = ax.matshow(spectogram_dense, cmap=cm.gray_r, norm=LogNorm(vmin=0.01, vmax=np.max(spectogram_dense)))
-    t = [0.01, 0.1, 1.0, np.max(spectogram_dense)]
+    im = ax.matshow(spectrograms_dense, cmap=cm.gray_r, norm=LogNorm(vmin=0.01, vmax=np.max(spectrograms_dense)))
+    t = [0.01, 0.1, 1.0, np.max(spectrograms_dense)]
     f.colorbar(im, cax=axcolor, ticks=t, format='$%.2f$')
 
-    ax.set_yticks([spectogram_dense.shape[0]-1, (spectogram_dense.shape[0]-1) // 2, 0])
+    ax.set_yticks([spectrograms_dense.shape[0]-1, (spectrograms_dense.shape[0]-1) // 2, 0])
     midfreq = 2**(np.log2(minfreq) + (np.log2(maxfreq) - np.log2(minfreq)) / 2)
     ax.set_yticklabels([f'{int(f)} Hz' for f in [minfreq, round(midfreq, 0),  maxfreq]])
     ax.set_ylabel('frequency')
 
-    ax.set_xticks([0,  spectogram_dense.shape[1]//2, spectogram_dense.shape[1]])
-    ax.set_xticklabels([f'{t}s' for t in [0, round(spectogram_dense.shape[1]/2 * tdeci / sr, 2), round(spectogram_dense.shape[1] * tdeci / sr, 2)]])
+    ax.set_xticks([0,  spectrograms_dense.shape[1]//2, spectrograms_dense.shape[1]])
+    ax.set_xticklabels([f'{t}s' for t in [0, round(spectrograms_dense.shape[1]/2 * tdeci / sr, 2), round(spectrograms_dense.shape[1] * tdeci / sr, 2)]])
     ax.set_xlabel('time')
